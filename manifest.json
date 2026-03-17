@@ -1,11 +1,11 @@
 {
-  "name": "Sağlık Hesapları",
+  "name": "Vücut ve Sağlık Hesaplayıcı",
   "short_name": "Sağlık",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#070b16",
-  "theme_color": "#0b1020",
-  "description": "Sağlık ve vücut kompozisyonu hesaplamaları için PWA.",
+  "background_color": "#101418",
+  "theme_color": "#101418",
+  "description": "Vücut kompozisyonu, enerji ihtiyacı ve temel sağlık göstergeleri için mobil uyumlu hesaplama uygulaması.",
   "icons": [
     {
       "src": "icon-192.png",
