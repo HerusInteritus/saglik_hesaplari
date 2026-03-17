@@ -3,194 +3,177 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0b1020" />
-  <meta name="description" content="Sağlık ve vücut kompozisyonu hesaplamaları için modern PWA." />
-  <title>Sağlık Hesapları</title>
+  <meta name="theme-color" content="#101418" />
+  <meta name="description" content="Vücut kompozisyonu, enerji ihtiyacı ve temel sağlık göstergeleri için mobil uyumlu hesaplama uygulaması." />
+  <title>Vücut ve Sağlık Hesaplayıcı</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <style>
     :root{
-      --bg-1:#070b16;
-      --bg-2:#0f1830;
-      --panel:rgba(16,24,45,.72);
-      --panel-2:rgba(12,18,34,.78);
-      --line:rgba(255,255,255,.08);
-      --text:#e7ecff;
-      --muted:#97a3c8;
-      --accent:#7c9cff;
-      --accent-2:#3de0c0;
-      --danger:#ff7b95;
-      --warning:#ffc86b;
-      --ok:#7de18e;
-      --shadow:0 18px 45px rgba(0,0,0,.35);
+      --bg:#f4f1ea;
+      --bg-soft:#ebe6dc;
+      --surface:#fffdf9;
+      --surface-2:#f8f4ec;
+      --ink:#1d252c;
+      --muted:#66707a;
+      --line:#ddd5c7;
+      --accent:#395c49;
+      --accent-2:#b88352;
+      --accent-3:#6b7b8c;
+      --shadow:0 12px 34px rgba(26,35,42,.08);
       --radius:24px;
       --radius-sm:16px;
+      --good-bg:#e8f6eb;
+      --good-bd:#93c59a;
+      --warn-bg:#fff4df;
+      --warn-bd:#e1b765;
+      --bad-bg:#fde9e7;
+      --bad-bd:#d98c84;
+      --neutral-bg:#eef2f6;
+      --neutral-bd:#b2c0cf;
+    }
+    body.dark{
+      --bg:#161a1d;
+      --bg-soft:#1b2024;
+      --surface:#20262b;
+      --surface-2:#252d33;
+      --ink:#eef3f5;
+      --muted:#a7b1b7;
+      --line:#313b44;
+      --accent:#83b892;
+      --accent-2:#d3a474;
+      --accent-3:#97aabb;
+      --shadow:0 14px 36px rgba(0,0,0,.26);
+      --good-bg:#1f3425;
+      --good-bd:#4f8f5d;
+      --warn-bg:#3b3120;
+      --warn-bd:#b58c46;
+      --bad-bg:#3a2525;
+      --bad-bd:#b46d68;
+      --neutral-bg:#27313a;
+      --neutral-bd:#617385;
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);
-      background:
-      radial-gradient(circle at top left, rgba(124,156,255,.18), transparent 30%),
-      radial-gradient(circle at top right, rgba(61,224,192,.16), transparent 28%),
-      linear-gradient(180deg, var(--bg-2), var(--bg-1) 55%);
-      min-height:100%;
+    html,body{margin:0;padding:0;background:
+      radial-gradient(circle at top right, rgba(184,131,82,.10), transparent 24%),
+      radial-gradient(circle at top left, rgba(57,92,73,.12), transparent 26%),
+      linear-gradient(180deg,var(--bg) 0%, var(--bg-soft) 100%);
+      color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;min-height:100%}
+    body{padding:18px}
+    .shell{max-width:1280px;margin:0 auto}
+    .masthead{
+      background:linear-gradient(135deg, color-mix(in oklab, var(--surface), var(--accent) 6%), var(--surface));
+      border:1px solid var(--line);border-radius:32px;padding:26px;box-shadow:var(--shadow)
     }
-    body{padding:20px}
-    .app{max-width:1220px;margin:0 auto}
-    .hero{
-      background:linear-gradient(135deg, rgba(124,156,255,.14), rgba(61,224,192,.08));
-      border:1px solid var(--line);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(14px);
-      border-radius:32px;
-      padding:26px;
-      display:grid;
-      gap:18px;
-    }
-    .hero-top{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
-    h1{margin:0;font-size:clamp(1.8rem, 5vw, 3rem);letter-spacing:-.04em}
-    .sub{color:var(--muted);max-width:760px;line-height:1.55}
-    .top-actions{display:flex;flex-wrap:wrap;gap:10px}
-    .btn{
-      border:none;border-radius:999px;padding:12px 16px;font-weight:700;cursor:pointer;
-      background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line);
-      transition:.18s transform,.18s opacity,.18s background;
-    }
-    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.1)}
-    .btn.primary{background:linear-gradient(135deg, var(--accent), #94adff); color:#081224; border:none}
-    .btn.secondary{background:linear-gradient(135deg, var(--accent-2), #80f1dd); color:#082019; border:none}
-    .btn.ghost{background:transparent}
-    .chips{display:flex;gap:10px;flex-wrap:wrap}
-    .chip{
-      padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);
-      color:var(--muted);font-size:.92rem
-    }
-    .layout{display:grid;grid-template-columns:300px 1fr;gap:18px;margin-top:18px}
-    .sidebar, .content-card{
-      background:var(--panel);
-      border:1px solid var(--line);
-      box-shadow:var(--shadow);
-      border-radius:28px;
-      backdrop-filter:blur(14px);
-    }
-    .sidebar{padding:16px;position:sticky;top:20px;height:fit-content}
-    .sidebar h3{margin:6px 6px 12px 6px;font-size:1rem;color:var(--muted);font-weight:700}
+    .masthead-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}
+    .eyebrow{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:.87rem;color:var(--muted)}
+    h1{margin:14px 0 8px;font-size:clamp(2rem,4.2vw,3.3rem);line-height:1;letter-spacing:-.04em}
+    .lead{max-width:760px;color:var(--muted);line-height:1.65;font-size:1rem}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{appearance:none;border:none;background:var(--surface-2);color:var(--ink);border:1px solid var(--line);padding:12px 15px;border-radius:999px;font-weight:700;cursor:pointer;transition:.18s ease}
+    .btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+    .btn.primary{background:var(--accent);color:#fff;border-color:transparent}
+    .btn.secondary{background:var(--accent-2);color:#fff;border-color:transparent}
+    .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .chip{padding:10px 13px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:.9rem;color:var(--muted)}
+    .layout{display:grid;grid-template-columns:290px 1fr;gap:18px;margin-top:18px}
+    .sidebar,.panel{background:var(--surface);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow)}
+    .sidebar{padding:16px;position:sticky;top:18px;height:fit-content}
+    .sidebar-title{font-size:.95rem;font-weight:800;color:var(--muted);margin:6px 8px 14px}
     .nav{display:grid;gap:10px}
-    .nav button{
-      text-align:left;border:none;background:rgba(255,255,255,.04);color:var(--text);
-      padding:14px 14px;border-radius:18px;cursor:pointer;border:1px solid transparent;
-    }
-    .nav button small{display:block;color:var(--muted);margin-top:4px}
-    .nav button.active{
-      background:linear-gradient(135deg, rgba(124,156,255,.24), rgba(61,224,192,.12));
-      border-color:rgba(124,156,255,.45)
-    }
-    .panels{display:grid;gap:18px}
-    .content-card{padding:20px}
-    .head{display:flex;gap:14px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;margin-bottom:16px}
-    .head h2{margin:0;font-size:1.3rem}
-    .desc{color:var(--muted);max-width:860px;line-height:1.55}
-    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-    .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-    .field{
-      background:var(--panel-2);
-      border:1px solid var(--line);
-      border-radius:20px;
-      padding:12px;
-    }
-    .field label{display:block;font-size:.92rem;color:var(--muted);margin-bottom:8px}
-    .field input,.field select{
-      width:100%;padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.04);color:var(--text);font-size:1rem;outline:none;
-    }
-    .field input:focus,.field select:focus{border-color:rgba(124,156,255,.55);box-shadow:0 0 0 4px rgba(124,156,255,.12)}
-    .results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:16px}
-    .result{
-      border-radius:22px;padding:16px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border:1px solid var(--line);min-height:120px;
-    }
-    .result .label{color:var(--muted);font-size:.9rem}
-    .result .value{font-size:1.6rem;font-weight:800;margin-top:8px;letter-spacing:-.03em}
-    .result .hint{color:var(--muted);font-size:.88rem;line-height:1.45;margin-top:8px}
-    .result.highlight{background:linear-gradient(135deg, rgba(124,156,255,.2), rgba(61,224,192,.12))}
-    .result.warn{outline:1px solid rgba(255,200,107,.35)}
-    .result.ok{outline:1px solid rgba(125,225,142,.35)}
-    .muted{color:var(--muted)}
+    .nav button{border:none;background:transparent;text-align:left;padding:14px;border-radius:18px;cursor:pointer;color:var(--ink);border:1px solid transparent}
+    .nav button:hover{background:var(--surface-2)}
+    .nav button.active{background:color-mix(in oklab, var(--surface-2), var(--accent) 10%);border-color:color-mix(in oklab, var(--line), var(--accent) 25%)}
+    .nav small{display:block;color:var(--muted);margin-top:4px}
+    .stack{display:grid;gap:18px}
+    .panel{padding:20px}
+    .panel.hidden{display:none}
+    .panel-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:16px}
+    .panel-head h2{margin:0;font-size:1.35rem}
+    .panel-desc{max-width:820px;color:var(--muted);line-height:1.6}
+    .form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .field{background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:12px}
+    .field label{display:block;font-size:.92rem;font-weight:700;color:var(--muted);margin-bottom:8px}
+    .field input,.field select{width:100%;padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:1rem;outline:none}
+    .field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in oklab, var(--accent), transparent 82%)}
+    .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:16px}
+    .card{border:1px solid var(--line);border-radius:22px;padding:16px;background:var(--surface-2);min-height:128px}
+    .card.good{background:var(--good-bg);border-color:var(--good-bd)}
+    .card.warn{background:var(--warn-bg);border-color:var(--warn-bd)}
+    .card.bad{background:var(--bad-bg);border-color:var(--bad-bd)}
+    .card.neutral{background:var(--neutral-bg);border-color:var(--neutral-bd)}
+    .label{font-size:.89rem;color:var(--muted)}
+    .value{font-size:1.72rem;font-weight:800;line-height:1.1;margin-top:8px;letter-spacing:-.03em}
+    .hint{margin-top:8px;font-size:.9rem;color:var(--muted);line-height:1.5}
+    .section-note,.note-card{padding:18px;border:1px solid var(--line);border-radius:20px;background:var(--surface-2);line-height:1.65;color:var(--muted)}
     .divider{height:1px;background:var(--line);margin:18px 0}
-    .footer{
-      margin-top:18px;
-      display:grid;
-      gap:16px;
-      color:var(--muted);
-      font-size:.94rem;
-    }
-    .footer-card{
-      padding:18px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:22px;line-height:1.65
-    }
-    .hidden{display:none !important}
-    .install-tip{font-size:.9rem;color:var(--muted)}
-    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;
-      background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:.88rem}
-    .small-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
-    .note{font-size:.88rem;color:var(--muted);line-height:1.55}
-    .kcal-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
-    .kcal-item{padding:14px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
-    @media (max-width: 980px){
+    .kcal-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .mini-card{padding:15px;border:1px solid var(--line);border-radius:18px;background:var(--surface-2)}
+    .tagline{font-size:.9rem;color:var(--muted)}
+    .footer-mini{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+    .top-badges{display:flex;gap:10px;flex-wrap:wrap}
+    .status{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:.86rem;color:var(--muted)}
+    @media (max-width: 1024px){
       .layout{grid-template-columns:1fr}
       .sidebar{position:static}
-      .results{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .grid,.grid-3,.small-grid,.kcal-list{grid-template-columns:1fr}
+      .form-grid,.cards{grid-template-columns:repeat(2,minmax(0,1fr))}
     }
-    @media (max-width: 560px){
-      body{padding:14px}
-      .hero,.sidebar,.content-card{border-radius:24px}
-      .results{grid-template-columns:1fr}
-      .btn{width:100%;justify-content:center}
-      .top-actions{width:100%}
-      .top-actions .btn{flex:1}
+    @media (max-width: 720px){
+      body{padding:12px}
+      .masthead,.sidebar,.panel{border-radius:24px}
+      .form-grid,.grid-2,.cards,.kcal-list,.footer-mini{grid-template-columns:1fr}
+      .toolbar{width:100%}
+      .toolbar .btn{flex:1}
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <section class="hero">
-      <div class="hero-top">
+  <div class="shell">
+    <section class="masthead">
+      <div class="masthead-top">
         <div>
-          <div class="badge">Telefon + PC uyumlu • PWA • GitHub Pages hazır</div>
-          <h1>Sağlık Hesapları</h1>
-          <div class="sub">
-            Vücut kompozisyonu, kalori ihtiyacı ve sağlık odaklı temel ölçümler için tek sayfalık modern hesap aracı.
-            Veriler cihazında saklanır. Sunucu yok. Drama yok.
-          </div>
+          <div class="eyebrow">Sağlık • Vücut kompozisyonu • Mobil uygulama deneyimi</div>
+          <h1>Vücut ve Sağlık Hesaplayıcı</h1>
+          <p class="lead">
+            Günlük enerji ihtiyacı, yağ oranı, vücut kompozisyonu ve temel oranları aynı panelde toplayan pratik bir hesap aracı.
+            Girdiler cihaz üzerinde saklanır; sayfa telefon, tablet ve masaüstünde aynı mantıkla çalışır.
+          </p>
         </div>
-        <div class="top-actions">
-          <button class="btn primary" id="installBtn">Uygulama Gibi Yükle</button>
-          <button class="btn" id="saveBtn">Verileri Kaydet</button>
-          <button class="btn ghost" id="resetBtn">Sıfırla</button>
+        <div class="toolbar">
+          <button class="btn primary" id="installBtn">Ana Ekrana Ekle</button>
+          <button class="btn" id="themeBtn">Tema Değiştir</button>
+          <button class="btn" id="saveBtn">Kaydet</button>
+          <button class="btn secondary" id="resetBtn">Temizle</button>
         </div>
       </div>
       <div class="chips">
-        <div class="chip">Excel'deki yağ oranı ve BMR hesapları eklendi</div>
-        <div class="chip">BMI, FFMI, bel/boy, yağsız kütle ve hedef kaloriler eklendi</div>
-        <div class="chip">Offline çalışabilir</div>
+        <div class="chip">Yağ oranı • BMR • TDEE • FFMI • BMI</div>
+        <div class="chip">Renk kodlu yorum alanları</div>
+        <div class="chip">PWA desteği ile uygulama gibi kullanım</div>
       </div>
-      <div class="install-tip" id="installTip">Mobilde tarayıcı menüsünden “Ana ekrana ekle” ile de kurulabilir.</div>
     </section>
 
     <div class="layout">
       <aside class="sidebar">
-        <h3>Hesap Modülleri</h3>
+        <div class="sidebar-title">Modüller</div>
         <div class="nav" id="nav"></div>
       </aside>
 
-      <main class="panels">
-        <section class="content-card panel" data-panel="overview">
-          <div class="head">
+      <main class="stack">
+        <section class="panel" data-panel="overview">
+          <div class="panel-head">
             <div>
-              <h2>Özet Paneli</h2>
-              <div class="desc">Boy, kilo, yaş ve isteğe bağlı çevre ölçülerini gir. Alttaki modüller ortak veriyi kullanır.</div>
+              <h2>Genel Bilgiler</h2>
+              <div class="panel-desc">Bu bölümde girilen boy, kilo, yaş ve çevre ölçüleri diğer tüm modüller tarafından ortak olarak kullanılır.</div>
+            </div>
+            <div class="top-badges">
+              <div class="status">Yerel kayıt</div>
+              <div class="status">Sunucusuz yapı</div>
             </div>
           </div>
-          <div class="grid-3">
+
+          <div class="form-grid">
             <div class="field">
               <label for="sex">Cinsiyet</label>
               <select id="sex">
@@ -200,117 +183,107 @@
             </div>
             <div class="field">
               <label for="age">Yaş</label>
-              <input id="age" type="number" min="1" step="1" placeholder="29" />
+              <input id="age" type="number" min="1" step="1" placeholder="29">
             </div>
             <div class="field">
-              <label for="activity">Aktivite Düzeyi</label>
+              <label for="activity">Aktivite düzeyi</label>
               <select id="activity">
                 <option value="1.2">Sedanter</option>
-                <option value="1.375">Haftada 1-3 Gün</option>
-                <option value="1.55" selected>Haftada 3-5 Gün</option>
-                <option value="1.725">Haftada 6-7 Gün</option>
-                <option value="1.9">Günde 2 Defa</option>
+                <option value="1.375">Düşük aktif</option>
+                <option value="1.55" selected>Orta aktif</option>
+                <option value="1.725">Yüksek aktif</option>
+                <option value="1.9">Çok yüksek aktif</option>
               </select>
             </div>
             <div class="field">
               <label for="height">Boy (cm)</label>
-              <input id="height" type="number" min="50" step="0.1" placeholder="170" />
+              <input id="height" type="number" min="50" step="0.1" placeholder="170">
             </div>
             <div class="field">
               <label for="weight">Ağırlık (kg)</label>
-              <input id="weight" type="number" min="20" step="0.1" placeholder="87" />
+              <input id="weight" type="number" min="20" step="0.1" placeholder="87">
             </div>
             <div class="field">
-              <label for="neck">Boyun (cm)</label>
-              <input id="neck" type="number" min="10" step="0.1" placeholder="43.5" />
-            </div>
-            <div class="field">
-              <label for="waist">Bel (cm)</label>
-              <input id="waist" type="number" min="20" step="0.1" placeholder="94" />
-            </div>
-            <div class="field" id="hipWrap">
-              <label for="hip">Kalça (cm) — kadın yağ oranı için</label>
-              <input id="hip" type="number" min="20" step="0.1" placeholder="107.5" />
-            </div>
-            <div class="field">
-              <label for="goal">Kalori Hedefi</label>
+              <label for="goal">Kalori hedefi</label>
               <select id="goal">
-                <option value="cut">Yağ Kaybı (-15%)</option>
-                <option value="recomp">Recomp / Hafif Açık (-8%)</option>
-                <option value="maintain" selected>Koruma (0%)</option>
-                <option value="leanbulk">Lean Bulk (+8%)</option>
-                <option value="bulk">Bulk (+15%)</option>
+                <option value="cut">Yağ kaybı</option>
+                <option value="recomp">Hafif açık / recomp</option>
+                <option value="maintain" selected>Koruma</option>
+                <option value="leanbulk">Kontrollü artış</option>
+                <option value="bulk">Artış dönemi</option>
               </select>
             </div>
+            <div class="field">
+              <label for="neck">Boyun çevresi (cm)</label>
+              <input id="neck" type="number" min="10" step="0.1" placeholder="43.5">
+            </div>
+            <div class="field">
+              <label for="waist">Bel çevresi (cm)</label>
+              <input id="waist" type="number" min="20" step="0.1" placeholder="94">
+            </div>
+            <div class="field" id="hipWrap">
+              <label for="hip">Kalça çevresi (cm)</label>
+              <input id="hip" type="number" min="20" step="0.1" placeholder="107.5">
+            </div>
           </div>
-          <div class="results" id="overviewResults"></div>
-          <div class="small-grid">
-            <div class="footer-card">
-              <strong>Nasıl kullanılır?</strong><br>
-              Ortak bilgileri bir kez gir. Sonra soldaki modüller arasında geçerek detay sonuçları gör.
-              Girdiğin veriler <em>yalnızca cihazında</em> saklanır.
-            </div>
-            <div class="footer-card">
-              <strong>Not</strong><br>
-              Bu araç pratik tahmin üretir. Tıbbi teşhis vermez. Çıkan sayıları mutlak gerçek sanmak istatistikle kavga etmektir.
-            </div>
+
+          <div class="cards" id="overviewResults"></div>
+          <div class="footer-mini">
+            <div class="note-card"><strong>Hesap mantığı</strong><br>Sonuçlar yaygın kullanılan tahmin formüllerinden üretilir. Özellikle yağ oranı ve günlük enerji ihtiyacı bölümleri ölçümlerin doğruluğuna duyarlıdır.</div>
+            <div class="note-card"><strong>Kullanım notu</strong><br>Bu araç izleme ve karşılaştırma amacıyla uygundur. Klinik değerlendirme, laboratuvar ölçümü veya profesyonel muayene yerine geçmez.</div>
           </div>
         </section>
 
-        <section class="content-card panel hidden" data-panel="bodyfat">
-          <div class="head">
+        <section class="panel hidden" data-panel="bodyfat">
+          <div class="panel-head">
             <div>
-              <h2>Vücut Yağ Oranı</h2>
-              <div class="desc">Excel dosyandaki formüller baz alınarak erkek ve kadın için çevre ölçülerinden tahmini yağ oranı hesaplanır.</div>
+              <h2>Yağ Oranı</h2>
+              <div class="panel-desc">Bel, boyun, boy ve kadın kullanıcılar için kalça ölçüsünü kullanan US Navy yaklaşımı ile tahmini vücut yağ oranı hesaplanır.</div>
             </div>
           </div>
-          <div class="results" id="bodyFatResults"></div>
-          <div class="footer">
-            <div class="footer-card">
-              <strong>Kullanılan formül</strong><br>
-              Erkek: US Navy bel-boyun-boy denklemi.<br>
-              Kadın: US Navy bel-kalça-boyun-boy denklemi.
-            </div>
+          <div class="cards" id="bodyFatResults"></div>
+          <div class="footer-mini">
+            <div class="note-card"><strong>Ölçüm önerisi</strong><br>Mezura cilde paralel tutulmalı, karın içeri çekilmemeli ve ölçüm mümkün olduğunca benzer koşullarda tekrarlanmalıdır.</div>
+            <div class="note-card"><strong>Yorum</strong><br>Bu yöntem saha kullanımı için pratiktir; kaliper, DEXA veya benzeri doğrudan ölçüm cihazları kadar hassas değildir.</div>
           </div>
         </section>
 
-        <section class="content-card panel hidden" data-panel="calories">
-          <div class="head">
+        <section class="panel hidden" data-panel="calories">
+          <div class="panel-head">
             <div>
-              <h2>BMR / TDEE / Hedef Kalori</h2>
-              <div class="desc">Excel dosyandaki BMR formülü kullanılır. Ardından aktivite çarpanıyla TDEE hesaplanır ve hedef kaloriler üretilir.</div>
+              <h2>Enerji İhtiyacı</h2>
+              <div class="panel-desc">Bazal metabolizma hızı Mifflin-St Jeor denklemi ile hesaplanır. Aktivite çarpanı eklenerek günlük toplam enerji ihtiyacı ve farklı hedef kaloriler oluşturulur.</div>
             </div>
           </div>
-          <div class="results" id="calorieResults"></div>
+          <div class="cards" id="calorieResults"></div>
           <div class="divider"></div>
           <div class="kcal-list" id="goalCalorieList"></div>
         </section>
 
-        <section class="content-card panel hidden" data-panel="composition">
-          <div class="head">
+        <section class="panel hidden" data-panel="composition">
+          <div class="panel-head">
             <div>
               <h2>Vücut Kompozisyonu</h2>
-              <div class="desc">Kilo ve yağ oranına göre yağ kütlesi, yağsız kütle, tahmini FFMI ve normalize FFMI hesaplanır.</div>
+              <div class="panel-desc">Toplam ağırlık ve yağ oranından yağ kütlesi, yağsız kütle, FFMI ve boya göre düzeltilmiş FFMI hesaplanır.</div>
             </div>
           </div>
-          <div class="results" id="compositionResults"></div>
-          <div class="footer">
-            <div class="footer-card note">
-              FFMI özellikle yağ oranı makul tahmin edildiğinde anlamlıdır. Yağ oranı çöpse FFMI de süslü çöptür.
-            </div>
+          <div class="cards" id="compositionResults"></div>
+          <div class="footer-mini">
+            <div class="note-card"><strong>FFMI hakkında</strong><br>FFMI, yağsız kütleyi boya oranlayarak değerlendirir. Spor yapan kişilerde ilerleme kıyaslaması için yararlı olabilir.</div>
+            <div class="note-card"><strong>Sınırlılık</strong><br>Yağ oranı tahmini saparsa yağsız kütle ve FFMI sonuçları da aynı yönde sapar.</div>
           </div>
         </section>
 
-        <section class="content-card panel hidden" data-panel="health">
-          <div class="head">
+        <section class="panel hidden" data-panel="health">
+          <div class="panel-head">
             <div>
-              <h2>Sağlık Göstergeleri</h2>
-              <div class="desc">BMI, bel/boy oranı, tahmini su ihtiyacı, protein aralığı ve ideal kilo bandı gibi pratik göstergeler.</div>
+              <h2>Temel Göstergeler</h2>
+              <div class="panel-desc">BMI, bel-boy oranı, yaklaşık su ihtiyacı, protein aralığı, yağ alım aralığı ve referans kilo bandı gibi pratik göstergeler sunulur.</div>
             </div>
           </div>
-          <div class="results" id="healthResults"></div>
+          <div class="cards" id="healthResults"></div>
           <div class="divider"></div>
-          <div class="small-grid" id="healthExtras"></div>
+          <div class="grid-2" id="healthExtras"></div>
         </section>
       </main>
     </div>
@@ -319,16 +292,17 @@
 <script>
 (() => {
   const modules = [
-    { key: 'overview', label: 'Özet', desc: 'Ortak veriler ve hızlı sonuçlar' },
-    { key: 'bodyfat', label: 'Yağ Oranı', desc: 'US Navy bazlı hesap' },
-    { key: 'calories', label: 'Kalori', desc: 'BMR, TDEE ve hedefler' },
-    { key: 'composition', label: 'Kompozisyon', desc: 'Yağ kütlesi, LBM, FFMI' },
-    { key: 'health', label: 'Sağlık', desc: 'BMI, bel/boy, su, protein' },
+    { key: 'overview', label: 'Genel Bilgiler', desc: 'Ortak ölçü girişi ve hızlı özet' },
+    { key: 'bodyfat', label: 'Yağ Oranı', desc: 'Çevre ölçülerine dayalı tahmin' },
+    { key: 'calories', label: 'Enerji İhtiyacı', desc: 'BMR, TDEE ve hedef kalori' },
+    { key: 'composition', label: 'Kompozisyon', desc: 'Yağ kütlesi, yağsız kütle, FFMI' },
+    { key: 'health', label: 'Temel Göstergeler', desc: 'BMI, bel-boy, su ve makrolar' }
   ];
 
   const $ = (id) => document.getElementById(id);
   const fields = ['sex','age','activity','height','weight','neck','waist','hip','goal'];
-  const storageKey = 'saglik-hesaplari-v1';
+  const storageKey = 'vucut-saglik-hesaplayici-v2';
+  const themeKey = 'vucut-saglik-tema';
   let deferredPrompt = null;
 
   function format(value, digits = 1, suffix = '') {
@@ -339,17 +313,13 @@
     }).format(value) + suffix;
   }
 
-  function parseNum(id) {
+  function num(id) {
     const v = parseFloat($(id).value);
     return Number.isFinite(v) ? v : NaN;
   }
 
-  function clamp(value, min, max) {
-    return Math.max(min, Math.min(max, value));
-  }
-
-  function bodyFatCategory(sex, bf) {
-    if (!isFinite(bf)) return 'Ölçü eksik';
+  function bodyFatLabel(sex, bf) {
+    if (!isFinite(bf)) return 'Ölçüm eksik';
     if (sex === 'male') {
       if (bf < 6) return 'Çok düşük';
       if (bf < 14) return 'Atletik';
@@ -364,33 +334,57 @@
     return 'Yüksek';
   }
 
-  function bmiCategory(bmi) {
-    if (!isFinite(bmi)) return 'Ölçü eksik';
+  function bmiLabel(bmi) {
+    if (!isFinite(bmi)) return 'Ölçüm eksik';
     if (bmi < 18.5) return 'Düşük';
     if (bmi < 25) return 'Normal';
     if (bmi < 30) return 'Fazla kilolu';
-    if (bmi < 35) return 'Obezite Sınıf I';
-    if (bmi < 40) return 'Obezite Sınıf II';
-    return 'Obezite Sınıf III';
+    if (bmi < 35) return 'Obezite I';
+    if (bmi < 40) return 'Obezite II';
+    return 'Obezite III';
   }
 
-  function whtrCategory(ratio) {
-    if (!isFinite(ratio)) return 'Ölçü eksik';
-    if (ratio < 0.4) return 'Düşük';
-    if (ratio < 0.5) return 'İyi';
-    if (ratio < 0.6) return 'Artmış risk';
+  function whtrLabel(v) {
+    if (!isFinite(v)) return 'Ölçüm eksik';
+    if (v < 0.4) return 'Düşük';
+    if (v < 0.5) return 'Referans aralık';
+    if (v < 0.6) return 'Artmış risk';
     return 'Yüksek risk';
+  }
+
+  function toneByBodyFat(sex, bf) {
+    if (!isFinite(bf)) return 'neutral';
+    const label = bodyFatLabel(sex, bf);
+    if (label === 'Atletik' || label === 'Fit') return 'good';
+    if (label === 'Orta') return 'warn';
+    if (label === 'Yüksek' || label === 'Çok düşük') return 'bad';
+    return 'neutral';
+  }
+
+  function toneByBmi(bmi) {
+    if (!isFinite(bmi)) return 'neutral';
+    const label = bmiLabel(bmi);
+    if (label === 'Normal') return 'good';
+    if (label === 'Fazla kilolu' || label === 'Düşük') return 'warn';
+    return 'bad';
+  }
+
+  function toneByWhtr(v) {
+    if (!isFinite(v)) return 'neutral';
+    if (v < 0.5) return 'good';
+    if (v < 0.6) return 'warn';
+    return 'bad';
   }
 
   function calc() {
     const sex = $('sex').value;
-    const age = parseNum('age');
+    const age = num('age');
     const activity = parseFloat($('activity').value);
-    const height = parseNum('height');
-    const weight = parseNum('weight');
-    const neck = parseNum('neck');
-    const waist = parseNum('waist');
-    const hip = parseNum('hip');
+    const height = num('height');
+    const weight = num('weight');
+    const neck = num('neck');
+    const waist = num('waist');
+    const hip = num('hip');
     const goal = $('goal').value;
 
     const heightM = height / 100;
@@ -399,14 +393,10 @@
     let bodyFat = NaN;
     if (sex === 'male') {
       const x = waist - neck;
-      if (x > 0 && height > 0) {
-        bodyFat = 86.01 * Math.log10(x) - 70.041 * Math.log10(height) + 30.3;
-      }
+      if (x > 0 && height > 0) bodyFat = 86.01 * Math.log10(x) - 70.041 * Math.log10(height) + 30.3;
     } else {
       const x = waist + hip - neck;
-      if (x > 0 && height > 0) {
-        bodyFat = 495 / (1.29579 - 0.35004 * Math.log10(x) + 0.22100 * Math.log10(height)) - 450;
-      }
+      if (x > 0 && height > 0) bodyFat = 495 / (1.29579 - 0.35004 * Math.log10(x) + 0.221 * Math.log10(height)) - 450;
     }
 
     let bmr = NaN;
@@ -415,141 +405,124 @@
         ? (10 * weight + 6.25 * height - 5 * age + 5)
         : (10 * weight + 6.25 * height - 5 * age - 161);
     }
+
     const tdee = bmr * activity;
-
-    const goalOffsets = {
-      cut: -0.15,
-      recomp: -0.08,
-      maintain: 0,
-      leanbulk: 0.08,
-      bulk: 0.15
-    };
-
-    const goalCalories = Object.fromEntries(
-      Object.entries(goalOffsets).map(([k, offset]) => [k, tdee * (1 + offset)])
-    );
+    const offsets = { cut:-0.15, recomp:-0.08, maintain:0, leanbulk:0.08, bulk:0.15 };
+    const goalCalories = Object.fromEntries(Object.entries(offsets).map(([k, v]) => [k, tdee * (1 + v)]));
     const selectedCalories = goalCalories[goal];
 
-    const fatMass = isFinite(bodyFat) && isFinite(weight) ? weight * (bodyFat / 100) : NaN;
-    const leanMass = isFinite(weight) && isFinite(fatMass) ? weight - fatMass : NaN;
+    const fatMass = isFinite(bodyFat) ? weight * bodyFat / 100 : NaN;
+    const leanMass = isFinite(fatMass) ? weight - fatMass : NaN;
     const ffmi = isFinite(leanMass) && isFinite(heightM) ? leanMass / (heightM * heightM) : NaN;
     const nffmi = isFinite(ffmi) && isFinite(heightM) ? ffmi + 6.1 * (1.8 - heightM) : NaN;
     const whtr = isFinite(waist) && isFinite(height) ? waist / height : NaN;
 
-    const proteinLow = isFinite(weight) ? weight * 1.6 : NaN;
-    const proteinHigh = isFinite(weight) ? weight * 2.2 : NaN;
-    const fatLow = isFinite(weight) ? weight * 0.6 : NaN;
-    const fatHigh = isFinite(weight) ? weight * 1.0 : NaN;
-    const water = isFinite(weight) ? weight * 35 : NaN; // ml
-    const idealLow = isFinite(heightM) ? 18.5 * heightM * heightM : NaN;
-    const idealHigh = isFinite(heightM) ? 24.9 * heightM * heightM : NaN;
-
     return {
       sex, age, activity, height, weight, neck, waist, hip, goal,
-      bmi, bodyFat, bmr, tdee, goalCalories, selectedCalories, fatMass, leanMass, ffmi, nffmi,
-      whtr, proteinLow, proteinHigh, fatLow, fatHigh, water, idealLow, idealHigh
+      bmi, bodyFat, bmr, tdee, goalCalories, selectedCalories,
+      fatMass, leanMass, ffmi, nffmi, whtr,
+      proteinLow: isFinite(weight) ? weight * 1.6 : NaN,
+      proteinHigh: isFinite(weight) ? weight * 2.2 : NaN,
+      fatLow: isFinite(weight) ? weight * 0.6 : NaN,
+      fatHigh: isFinite(weight) ? weight * 1.0 : NaN,
+      water: isFinite(weight) ? weight * 35 : NaN,
+      idealLow: isFinite(heightM) ? 18.5 * heightM * heightM : NaN,
+      idealHigh: isFinite(heightM) ? 24.9 * heightM * heightM : NaN
     };
   }
 
-  function resultCard(label, value, hint = '', cls = '') {
-    return `<div class="result ${cls}">
+  function card(label, value, hint = '', tone = 'neutral') {
+    return `<div class="card ${tone}">
       <div class="label">${label}</div>
       <div class="value">${value}</div>
       <div class="hint">${hint}</div>
     </div>`;
   }
 
-  function renderOverview(data) {
+  function renderOverview(d) {
     $('overviewResults').innerHTML = [
-      resultCard('BMI', format(data.bmi, 1), bmiCategory(data.bmi), 'highlight'),
-      resultCard('Yağ Oranı', format(data.bodyFat, 1, '%'), bodyFatCategory(data.sex, data.bodyFat)),
-      resultCard('TDEE', format(data.tdee, 0, ' kcal'), 'Günlük tahmini enerji ihtiyacı'),
-      resultCard('Hedef Kalori', format(data.selectedCalories, 0, ' kcal'), $('goal').selectedOptions[0].text),
+      card('BMI', format(d.bmi, 1), bmiLabel(d.bmi), toneByBmi(d.bmi)),
+      card('Yağ oranı', format(d.bodyFat, 1, '%'), bodyFatLabel(d.sex, d.bodyFat), toneByBodyFat(d.sex, d.bodyFat)),
+      card('TDEE', format(d.tdee, 0, ' kcal'), 'Tahmini günlük toplam enerji ihtiyacı', 'neutral'),
+      card('Seçili hedef', format(d.selectedCalories, 0, ' kcal'), $('goal').selectedOptions[0].text, 'neutral')
     ].join('');
   }
 
-  function renderBodyFat(data) {
-    const formulaText = data.sex === 'male'
-      ? 'Bel - boyun farkı ve boy kullanılır.'
-      : 'Bel + kalça - boyun ve boy kullanılır.';
+  function renderBodyFat(d) {
     $('bodyFatResults').innerHTML = [
-      resultCard('Tahmini Yağ Oranı', format(data.bodyFat, 1, '%'), bodyFatCategory(data.sex, data.bodyFat), 'highlight'),
-      resultCard('Yorum', bodyFatCategory(data.sex, data.bodyFat), formulaText),
-      resultCard('Bel Ölçüsü', format(data.waist, 1, ' cm'), 'Karın çevresi darbe yemesin diye gevşek mezura ile'),
-      resultCard('Gerekli Ek Ölçü', data.sex === 'female' ? format(data.hip, 1, ' cm') : format(data.neck, 1, ' cm'),
-        data.sex === 'female' ? 'Kadın formülü kalça ister' : 'Erkek formülü boyun ister'),
+      card('Tahmini yağ oranı', format(d.bodyFat, 1, '%'), bodyFatLabel(d.sex, d.bodyFat), toneByBodyFat(d.sex, d.bodyFat)),
+      card('Formül tipi', d.sex === 'male' ? 'US Navy / Erkek' : 'US Navy / Kadın', d.sex === 'male' ? 'Bel, boyun ve boy kullanılır.' : 'Bel, kalça, boyun ve boy kullanılır.', 'neutral'),
+      card('Bel çevresi', format(d.waist, 1, ' cm'), 'Göbek hizasında alınan ölçü', 'neutral'),
+      card(d.sex === 'female' ? 'Kalça çevresi' : 'Boyun çevresi', d.sex === 'female' ? format(d.hip, 1, ' cm') : format(d.neck, 1, ' cm'), d.sex === 'female' ? 'Kadın formülünde kullanılır.' : 'Erkek formülünde kullanılır.', 'neutral')
     ].join('');
   }
 
-  function renderCalories(data) {
+  function renderCalories(d) {
     $('calorieResults').innerHTML = [
-      resultCard('BMR', format(data.bmr, 0, ' kcal'), 'Tam dinlenmede teorik enerji ihtiyacı', 'highlight'),
-      resultCard('Aktivite Çarpanı', format(data.activity, 3), $('activity').selectedOptions[0].text),
-      resultCard('TDEE', format(data.tdee, 0, ' kcal'), 'Hareket dahil günlük tahmini toplam'),
-      resultCard('Seçili Hedef', format(data.selectedCalories, 0, ' kcal'), $('goal').selectedOptions[0].text),
+      card('BMR', format(d.bmr, 0, ' kcal'), 'Bazal metabolizma hızı', 'neutral'),
+      card('Aktivite çarpanı', format(d.activity, 3), $('activity').selectedOptions[0].text, 'neutral'),
+      card('TDEE', format(d.tdee, 0, ' kcal'), 'Günlük toplam enerji ihtiyacı', 'neutral'),
+      card('Seçili kalori', format(d.selectedCalories, 0, ' kcal'), $('goal').selectedOptions[0].text, 'neutral')
     ].join('');
 
     const labels = {
-      cut: 'Yağ Kaybı (-15%)',
-      recomp: 'Recomp / Hafif Açık (-8%)',
-      maintain: 'Koruma (0%)',
-      leanbulk: 'Lean Bulk (+8%)',
-      bulk: 'Bulk (+15%)',
+      cut:'Yağ kaybı', recomp:'Hafif açık / recomp', maintain:'Koruma', leanbulk:'Kontrollü artış', bulk:'Artış dönemi'
     };
-    $('goalCalorieList').innerHTML = Object.entries(data.goalCalories).map(([k,v]) => `
-      <div class="kcal-item">
+    $('goalCalorieList').innerHTML = Object.entries(d.goalCalories).map(([k, v]) => `
+      <div class="mini-card">
         <div class="label">${labels[k]}</div>
-        <div class="value" style="font-size:1.3rem;font-weight:800;margin-top:6px">${format(v,0,' kcal')}</div>
-      </div>
-    `).join('');
+        <div class="value" style="font-size:1.25rem;margin-top:6px">${format(v, 0, ' kcal')}</div>
+        <div class="tagline">Farklı hedef dönemleri için referans değer</div>
+      </div>`).join('');
   }
 
-  function renderComposition(data) {
+  function renderComposition(d) {
     $('compositionResults').innerHTML = [
-      resultCard('Yağ Kütlesi', format(data.fatMass, 1, ' kg'), 'Kilonun yağ kısmı'),
-      resultCard('Yağsız Kütle', format(data.leanMass, 1, ' kg'), 'Kas, organ, su, kemik vs.', 'highlight'),
-      resultCard('FFMI', format(data.ffmi, 1), 'Yağsız kütle indeksi'),
-      resultCard('Normalize FFMI', format(data.nffmi, 1), '1.80 m boya normalize edilmiş sürüm'),
+      card('Yağ kütlesi', format(d.fatMass, 1, ' kg'), 'Toplam ağırlıktaki tahmini yağ kısmı', 'neutral'),
+      card('Yağsız kütle', format(d.leanMass, 1, ' kg'), 'Kas, su, kemik ve diğer dokuların toplamı', 'good'),
+      card('FFMI', format(d.ffmi, 1), 'Yağsız kütle indeksi', 'neutral'),
+      card('Normalize FFMI', format(d.nffmi, 1), '1.80 metre boya göre düzeltilmiş değer', 'neutral')
     ].join('');
   }
 
-  function renderHealth(data) {
+  function renderHealth(d) {
     $('healthResults').innerHTML = [
-      resultCard('BMI', format(data.bmi, 1), bmiCategory(data.bmi)),
-      resultCard('Bel / Boy', format(data.whtr, 2), whtrCategory(data.whtr), 'highlight'),
-      resultCard('Su İhtiyacı', format(data.water / 1000, 1, ' L'), 'Yaklaşık 35 ml/kg baz alınmıştır'),
-      resultCard('İdeal Kilo Bandı', `${format(data.idealLow,1)}–${format(data.idealHigh,1)} kg`, 'BMI 18.5–24.9 aralığı'),
+      card('BMI', format(d.bmi, 1), bmiLabel(d.bmi), toneByBmi(d.bmi)),
+      card('Bel / boy oranı', format(d.whtr, 2), whtrLabel(d.whtr), toneByWhtr(d.whtr)),
+      card('Su ihtiyacı', format(d.water / 1000, 1, ' L'), 'Yaklaşık 35 ml / kg yaklaşımı', 'neutral'),
+      card('Referans kilo bandı', `${format(d.idealLow, 1)}–${format(d.idealHigh, 1)} kg`, 'BMI 18.5–24.9 aralığı', 'neutral')
     ].join('');
 
     $('healthExtras').innerHTML = [
-      `<div class="footer-card"><strong>Protein Aralığı</strong><br>${format(data.proteinLow,0)}–${format(data.proteinHigh,0)} g/gün<br><span class="muted">1.6–2.2 g/kg</span></div>`,
-      `<div class="footer-card"><strong>Yağ Aralığı</strong><br>${format(data.fatLow,0)}–${format(data.fatHigh,0)} g/gün<br><span class="muted">0.6–1.0 g/kg</span></div>`,
-      `<div class="footer-card"><strong>Bel/Boy Yorumu</strong><br>${whtrCategory(data.whtr)}<br><span class="muted">0.5 altı genelde daha iyi kabul edilir.</span></div>`,
-      `<div class="footer-card"><strong>Not</strong><br>Bu panel tıbbi karar yerine geçmez. Ama kaba yön tayini için işe yarar.</div>`,
+      `<div class="note-card"><strong>Protein aralığı</strong><br>${format(d.proteinLow, 0)}–${format(d.proteinHigh, 0)} g / gün<br><span class="tagline">Genel sporcu yaklaşımı: 1.6–2.2 g / kg</span></div>`,
+      `<div class="note-card"><strong>Yağ alım aralığı</strong><br>${format(d.fatLow, 0)}–${format(d.fatHigh, 0)} g / gün<br><span class="tagline">Alt sınır çok düşürüldüğünde sürdürülebilirlik zorlaşabilir.</span></div>`,
+      `<div class="note-card"><strong>Bel-boy yorumu</strong><br>${whtrLabel(d.whtr)}<br><span class="tagline">Düşük oranlar genelde daha iyi metabolik profil ile ilişkilendirilir.</span></div>`,
+      `<div class="note-card"><strong>Değerlendirme çerçevesi</strong><br>Sonuçların trend halinde takip edilmesi tek seferlik ölçümden daha anlamlıdır.</div>`
     ].join('');
   }
 
   function renderAll() {
-    const data = calc();
-    renderOverview(data);
-    renderBodyFat(data);
-    renderCalories(data);
-    renderComposition(data);
-    renderHealth(data);
+    const d = calc();
     $('hipWrap').classList.toggle('hidden', $('sex').value !== 'female');
+    renderOverview(d);
+    renderBodyFat(d);
+    renderCalories(d);
+    renderComposition(d);
+    renderHealth(d);
   }
 
-  function save() {
+  function saveData() {
     const data = {};
     fields.forEach(k => data[k] = $(k).value);
     localStorage.setItem(storageKey, JSON.stringify(data));
   }
 
-  function load() {
+  function loadData() {
     const raw = localStorage.getItem(storageKey);
     if (!raw) {
       $('sex').value = 'male';
       $('age').value = '29';
+      $('activity').value = '1.55';
       $('height').value = '170';
       $('weight').value = '87';
       $('neck').value = '43.5';
@@ -564,7 +537,17 @@
     } catch {}
   }
 
-  function reset() {
+  function loadTheme() {
+    const stored = localStorage.getItem(themeKey);
+    if (stored === 'dark') document.body.classList.add('dark');
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle('dark');
+    localStorage.setItem(themeKey, document.body.classList.contains('dark') ? 'dark' : 'light');
+  }
+
+  function resetData() {
     localStorage.removeItem(storageKey);
     fields.forEach(k => $(k).value = '');
     $('sex').value = 'male';
@@ -579,14 +562,11 @@
   }
 
   function setupNav() {
-    const nav = $('nav');
-    nav.innerHTML = modules.map((m, idx) => `
-      <button class="${idx===0?'active':''}" data-key="${m.key}">
-        ${m.label}
-        <small>${m.desc}</small>
-      </button>
+    $('nav').innerHTML = modules.map((m, i) => `
+      <button data-key="${m.key}" class="${i === 0 ? 'active' : ''}">${m.label}<small>${m.desc}</small></button>
     `).join('');
-    nav.addEventListener('click', (e) => {
+
+    $('nav').addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-key]');
       if (!btn) return;
       activatePanel(btn.dataset.key);
@@ -597,7 +577,6 @@
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      $('installBtn').classList.remove('hidden');
     });
 
     $('installBtn').addEventListener('click', async () => {
@@ -606,28 +585,30 @@
         await deferredPrompt.userChoice;
         deferredPrompt = null;
       } else {
-        alert('Tarayıcı kurulum istemi göstermediyse menüden "Ana ekrana ekle" kullan.');
+        alert('Tarayıcı kurulum istemi göstermediyse menüden "Ana ekrana ekle" seçeneği kullanılabilir.');
       }
     });
   }
 
   fields.forEach(id => {
-    $(id).addEventListener('input', () => { renderAll(); save(); });
-    $(id).addEventListener('change', () => { renderAll(); save(); });
+    $(id).addEventListener('input', () => { renderAll(); saveData(); });
+    $(id).addEventListener('change', () => { renderAll(); saveData(); });
   });
 
   $('saveBtn').addEventListener('click', () => {
-    save();
-    const btn = $('saveBtn');
-    const old = btn.textContent;
-    btn.textContent = 'Kaydedildi';
-    setTimeout(() => btn.textContent = old, 900);
+    saveData();
+    const el = $('saveBtn');
+    const text = el.textContent;
+    el.textContent = 'Kaydedildi';
+    setTimeout(() => el.textContent = text, 1000);
   });
 
-  $('resetBtn').addEventListener('click', reset);
+  $('resetBtn').addEventListener('click', resetData);
+  $('themeBtn').addEventListener('click', toggleTheme);
 
   setupNav();
-  load();
+  loadTheme();
+  loadData();
   renderAll();
   setupInstall();
 
