@@ -201,7 +201,7 @@
             </div>
             <div class="field">
               <label for="weight">Ağırlık (kg)</label>
-              <input id="weight" type="number" min="20" step="0.1" placeholder="87">
+              <input id="weight" type="number" min="20" step="0.1" placeholder="85">
             </div>
             <div class="field">
               <label for="goal">Kalori hedefi</label>
@@ -215,11 +215,11 @@
             </div>
             <div class="field">
               <label for="neck">Boyun çevresi (cm)</label>
-              <input id="neck" type="number" min="10" step="0.1" placeholder="43.5">
+              <input id="neck" type="number" min="10" step="0.1" placeholder="44">
             </div>
             <div class="field">
               <label for="waist">Bel çevresi (cm)</label>
-              <input id="waist" type="number" min="20" step="0.1" placeholder="94">
+              <input id="waist" type="number" min="20" step="0.1" placeholder="92">
             </div>
             <div class="field" id="hipWrap">
               <label for="hip">Kalça çevresi (cm)</label>
@@ -325,13 +325,20 @@
       if (bf < 14) return 'Atletik';
       if (bf < 18) return 'Fit';
       if (bf < 25) return 'Orta';
-      return 'Yüksek';
+      if (bf < 30) return 'Fazla Kilolu';
+      if (bf < 35) return 'Obez';
+      if (bf < 40) return 'Morbid Obez';
+      
+      return 'Süper Obez';
     }
     if (bf < 14) return 'Çok düşük';
     if (bf < 21) return 'Atletik';
     if (bf < 25) return 'Fit';
     if (bf < 32) return 'Orta';
-    return 'Yüksek';
+    if (bf < 37) return 'Fazla Kilolu';
+    if (bf < 42) return 'Obez';
+    if (bf < 47) return 'Morbid Obez';
+    return 'Süper Obez';
   }
 
   function bmiLabel(bmi) {
@@ -352,14 +359,21 @@
     return 'Yüksek risk';
   }
 
-  function toneByBodyFat(sex, bf) {
-    if (!isFinite(bf)) return 'neutral';
-    const label = bodyFatLabel(sex, bf);
-    if (label === 'Atletik' || label === 'Fit') return 'good';
-    if (label === 'Orta') return 'warn';
-    if (label === 'Yüksek' || label === 'Çok düşük') return 'bad';
-    return 'neutral';
+function toneByBodyFat(sex, bf) {
+  if (!isFinite(bf)) return 'neutral';
+
+  if (sex === 'male') {
+    if (bf < 6) return 'bad';
+    if (bf < 18) return 'good';
+    if (bf < 30) return 'warn';
+    return 'bad';
   }
+
+  if (bf < 14) return 'bad';
+  if (bf < 25) return 'good';
+  if (bf < 37) return 'warn';
+  return 'bad';
+}
 
   function toneByBmi(bmi) {
     if (!isFinite(bmi)) return 'neutral';
